@@ -17,6 +17,7 @@ public class Book {
     private boolean isBorrowed = false;
     public String borrowedBy = null;
     private LocalDate borrowDate;
+    private String reservedBy=null;
     private LocalDate dueDate;
     private List<Review> reviews =new ArrayList<>();
     public Book() {
@@ -96,5 +97,25 @@ public class Book {
     }
     public List<Review> getReviews(){
         return reviews;
+    }
+    public boolean reserveBook(String username){
+        if(reservedBy!=null || username.equals(borrowedBy)){
+            return false;
+        }
+        this.reservedBy=username;
+        return true;
+    }
+    public boolean cancelReservation(String username){
+        if(reservedBy!=null && reservedBy.equals(username)){
+            reservedBy=null;
+            return true;
+        }
+        return false;
+    }
+    public boolean isReserved(){
+        return reservedBy!=null;
+    }
+    public String getReservedBy(){
+        return reservedBy;
     }
 }

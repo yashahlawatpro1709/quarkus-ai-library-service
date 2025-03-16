@@ -8,6 +8,7 @@ import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import org.jboss.logging.Logger;
 import org.jboss.resteasy.annotations.jaxrs.PathParam;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -15,6 +16,7 @@ import java.util.Optional;
 
 @Path("/api/books")
 @Produces(MediaType.APPLICATION_JSON)
+@Consumes(MediaType.APPLICATION_JSON)
 public class BookResource {
     @Inject
     BookRepository repository;
@@ -188,6 +190,7 @@ public class BookResource {
         String openAIResponse = openAIService.chatWithOpenAI(prompt);
         return Response.ok(openAIResponse).build();
     }
+
     @Inject
     OpenAIBookData openAIBookData;
     @Inject
@@ -206,5 +209,27 @@ public class BookResource {
     public Response getAllBooksFromLibrary() {
         List<Book> books = libraryManager.getBooks();
         return Response.ok(books).build();
+    }
+
+    @POST
+    @Path("/{id}/cancel-reservation/{username}")
+    public Response cancelReservation(@PathParam("id") int id, @PathParam("username") String username) {
+        logger.info(username + "is canceling reservation for Book ID:" + id);
+        boolean success = repository.cancelReservation(id, username);
+        if (success) {
+            return Response.ok("Reservation added successfully").build();
+        } else {
+            return Response.status(Response.Status.BAD_REQUEST).entity("No reservation found for user:" + username).build();
+        }
+    }
+
+    @GET
+    @Path("/{id}/reserved-by")
+    public Response getReservedBy(@PathParam("id") int id) {
+        Optional<Book> bookOpt = repository.getBook(id);
+        if (bookOpt.isPresent() && bookOpt.get().isReserved()) {
+            return Response.ok(bookOpt.get().getReservedBy()).build();
+        }
+        return Response.status(Response.Status.NOT_FOUND).entity("Book not reserved").build();
     }
 }

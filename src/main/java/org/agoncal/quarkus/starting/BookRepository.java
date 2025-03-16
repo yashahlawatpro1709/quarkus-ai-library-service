@@ -54,4 +54,10 @@ public class BookRepository {
     public List<Review> getReviews(int bookId){
         return getBook(bookId).map(Book::getReviews).orElse(List.of());
     }
+    public boolean reserveBook(int id,String username){
+        return getBook(id).map(book->book.reserveBook(username)).orElse(false);
+    }
+    public boolean cancelReservation(int id,String username){
+        return getBook(id).map(book->book.cancelReservation(username)).orElse(false);
+    }
 }
