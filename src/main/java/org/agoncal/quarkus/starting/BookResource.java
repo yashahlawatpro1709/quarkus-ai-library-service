@@ -13,6 +13,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Path("/api/books")
 @Produces(MediaType.APPLICATION_JSON)
@@ -231,5 +233,35 @@ public class BookResource {
             return Response.ok(bookOpt.get().getReservedBy()).build();
         }
         return Response.status(Response.Status.NOT_FOUND).entity("Book not reserved").build();
+    }
+    @Inject
+    BookRecommendation bookRecommendation;
+    @GET
+    @Path("/recommendations/genre/{genre}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getRecommendationByGenre(@PathParam("genre") String genre){
+        List<Book> recommendations=bookRecommendation.getRecommendationsByGenre(genre);
+        return Response.ok(recommendations).build();
+    }
+    @GET
+    @Path("/recommendations/author/{author}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getRecommendationByAuthor(@PathParam("author") String author){
+        List<Book> recommendations=bookRecommendation.getRecommendationsByAuthor(author);
+        return Response.ok(recommendations).build();
+    }
+    @GET
+    @Path("/recommendations/author/{year}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getRecommendationByYear(@PathParam("year") int year){
+        List<Book> recommendations=bookRecommendation.getRecommendationsByYear(year);
+        return Response.ok(recommendations).build();
+    }
+    @GET
+    @Path("/recommendations/similar/{bookId}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getSimilarBook(@PathParam("bookId") int bookId){
+        List<Book> recommendations=bookRecommendation.getSimilarBooks(bookId);
+        return Response.ok(recommendations).build();
     }
 }
