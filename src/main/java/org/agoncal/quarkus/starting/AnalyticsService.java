@@ -14,7 +14,7 @@ public class AnalyticsService {
 
     public void recordBorrowing(int bookId, String username) {
         bookBorrowCount.put(bookId, bookBorrowCount.getOrDefault(bookId, 0) + 1);
-        userActivity.put(username, userActivity.getOrDefault(username, 0) + 1);
+        userActivity.put(username, userActivity.getOrDefault(username, 0) - 1);
 
     }
 
